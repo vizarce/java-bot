@@ -5,8 +5,11 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.util.ArrayList;
 import java.util.List;
 @Component
 public class MateAcademyBot extends TelegramLongPollingBot {
@@ -32,12 +35,23 @@ public class MateAcademyBot extends TelegramLongPollingBot {
 
         String input = message.getText();
 
+        StringBuilder sb = new StringBuilder();
+        String welcome = sb.append("Hello dear User! \nWelcome to the Recipe Bot!")
+                .append("\n\nYou can pass here the meal of the day \nand get appropriate recipes")
+                .append("\n\n.......Possible options are:......\n")
+                .append("--- Breakfast ---\n")
+                .append("--- Lunch ---\n")
+                .append("--- Dinner ---\n")
+                .append("--- Supper ---\n")
+                .toString();
+        if (input.equalsIgnoreCase("/start")) {
+            sendMessage.setText(welcome);
+        }
 
         if ((input.replaceAll("[ .]", "").replaceAll("[ !]", "")).equalsIgnoreCase("hello")
                 || (input.replaceAll("[ .]", "").replaceAll("[ !]", "")).equalsIgnoreCase("hi")) {
             sendMessage.setText("Hello dear User! \nWelcome to the Recipe Bot!");
         }
-        StringBuilder sb = new StringBuilder();
         String breakfastMenu = sb.append(".......Breakfast Menu!......\n")
                 .append("1. Blueberry-Banana-Nut Smoothie\n")
                 .append("2. Classic Omelet and Greens\n")
@@ -87,7 +101,31 @@ public class MateAcademyBot extends TelegramLongPollingBot {
 
 
 
+    }
 
+    private ReplyKeyboardMarkup getMenuKeyboard() {
+        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        replyKeyboardMarkup.setSelective(true);
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
+
+        List<KeyboardRow> keyboardRows = new ArrayList<>();
+
+        KeyboardRow keyboardRow = new KeyboardRow();
+        keyboardRow.add("Breakfast");
+        keyboardRow.add("Lunch");
+        KeyboardRow keyboardSecondRow = new KeyboardRow();
+        keyboardSecondRow.add("Dinner");
+        keyboardSecondRow.add("Supper");
+
+        keyboardRows.add(keyboardRow);
+        keyboardRows.add(keyboardSecondRow);
+
+        replyKeyboardMarkup.setKeyboard(keyboardRows);
+
+        return replyKeyboardMarkup;
+    }
+}
 //        System.out.println("Message received: " + update.getMessage().getText());
 //        System.out.println("update.getMyChatMember(): " + update.getMyChatMember());
 //        System.out.println("update.getMessage().getMessageId(): " + update.getMessage().getMessageId());
@@ -143,5 +181,4 @@ public class MateAcademyBot extends TelegramLongPollingBot {
 //                e.printStackTrace();
 //            }
 //        }
-    }
-}
+
