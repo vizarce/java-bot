@@ -45,6 +45,9 @@ public class MateAcademyBot extends TelegramLongPollingBot {
                 .append("--- Supper ---\n")
                 .toString();
         if (input.equalsIgnoreCase("/start")) {
+            sendMessage.enableMarkdown(true);
+            ReplyKeyboardMarkup replyKeyboardMarkup = getMenuKeyboard();
+            sendMessage.setReplyMarkup(replyKeyboardMarkup);
             sendMessage.setText(welcome);
         }
 
