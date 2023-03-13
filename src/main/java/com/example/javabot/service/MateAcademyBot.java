@@ -38,12 +38,12 @@ public class MateAcademyBot extends TelegramLongPollingBot {
         StringBuilder sb = new StringBuilder();
         String welcome = sb.append("Hello dear User! \nWelcome to the Recipe Bot!")
                 .append("\n\nYou can pass here the meal of the day \nand get appropriate recipes")
-                .append("\n\n.......Possible options are:......\n")
-                .append("--- Breakfast ---\n")
-                .append("--- Lunch ---\n")
-                .append("--- Dinner ---\n")
-                .append("--- Supper ---\n")
-                .toString();
+                .append("\n\n.......Possible options are:......\n").toString();
+//                .append("--- Breakfast ---\n")
+//                .append("--- Lunch ---\n")
+//                .append("--- Dinner ---\n")
+//                .append("--- Supper ---\n")
+//                .toString();
         if (input.equalsIgnoreCase("/start")) {
             sendMessage.enableMarkdown(true);
             ReplyKeyboardMarkup replyKeyboardMarkup = getMenuKeyboard();
@@ -99,11 +99,6 @@ public class MateAcademyBot extends TelegramLongPollingBot {
         } catch (TelegramApiException e) {
             e.printStackTrace();
         }
-
-
-
-
-
     }
 
     private ReplyKeyboardMarkup getMenuKeyboard() {
@@ -129,6 +124,34 @@ public class MateAcademyBot extends TelegramLongPollingBot {
         return replyKeyboardMarkup;
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 //        System.out.println("Message received: " + update.getMessage().getText());
 //        System.out.println("update.getMyChatMember(): " + update.getMyChatMember());
 //        System.out.println("update.getMessage().getMessageId(): " + update.getMessage().getMessageId());
