@@ -5,6 +5,7 @@ import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboard;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ReplyKeyboardMarkup;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.KeyboardRow;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
@@ -13,6 +14,10 @@ import java.util.ArrayList;
 import java.util.List;
 @Component
 public class MateAcademyBot extends TelegramLongPollingBot {
+	
+	public List<KeyboardRow> keyboardRows = new ArrayList<KeyboardRow>();
+	
+	public ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
 
     @Override
     public String getBotUsername() {
@@ -46,7 +51,7 @@ public class MateAcademyBot extends TelegramLongPollingBot {
 //                .toString();
         if (input.equalsIgnoreCase("/start")) {
             sendMessage.enableMarkdown(true);
-            ReplyKeyboardMarkup replyKeyboardMarkup = getMenuKeyboard();
+            replyKeyboardMarkup.setKeyboard(getMenuKeyboard());
             sendMessage.setReplyMarkup(replyKeyboardMarkup);
             sendMessage.setText(welcome);
         }
@@ -81,18 +86,86 @@ public class MateAcademyBot extends TelegramLongPollingBot {
                 .append("3. Smoked Dry Rub Chicken Wings")
                 .toString();
         sb.delete(0, sb.length());
+        
+        String lateSupper = "Late Supper Menu is in processing...";
+        String streetFood = "Street Food Menu is in processing...";
 
         if (input.equalsIgnoreCase("breakfast")) {
             sendMessage.setText(breakfastMenu);
+            sendMessage.setChatId(String.valueOf(message.getChatId()));
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+            sendMessage.setText("Do you want to review the additional meals? \nFor this option enter: '/additional'");
         } else if (input.equalsIgnoreCase("lunch")) {
             sendMessage.setText(lunchMenu);
+            sendMessage.setChatId(String.valueOf(message.getChatId()));
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+            sendMessage.setText("Do you want to review the additional meals? \nFor this option enter: '/additional'");
         } else if (input.equalsIgnoreCase("dinner")) {
             sendMessage.setText(dinnerMenu);
+            sendMessage.setChatId(String.valueOf(message.getChatId()));
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+            sendMessage.setText("Do you want to review the additional meals? \nFor this option enter: '/additional'");
         } else if (input.equalsIgnoreCase("supper")) {
             sendMessage.setText(supperMenu);
-        } //else {
-            //sendMessage.setText("Incorrect Input! Try once more.");
-        //}
+            sendMessage.setChatId(String.valueOf(message.getChatId()));
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+            sendMessage.setText("Do you want to review the additional meals? \nFor this option enter: '/additional'");
+        } 
+        //sendMessage.setText("Do you want to review the additional meals? \nFor this option enter: '/additional'");
+        if (input.equalsIgnoreCase("/additional")) {
+        	sendMessage.enableMarkdown(true);
+            //ReplyKeyboardMarkup replyKeyboardMarkupAdd = getAddMenuKeyboard();
+            //ReplyKeyboard replyKeyboardMarkup = getMenuKeyboard();
+        	replyKeyboardMarkup.setKeyboard(getAddMenuKeyboard());
+			sendMessage.setReplyMarkup(replyKeyboardMarkup);
+        }
+        
+        if ((input.replaceAll("[ ?]", " ").replaceAll("[ !]", " ").replaceAll("[ .]", " ").trim()).equalsIgnoreCase("how are you")) {
+        	sendMessage.setText("Thank you! I'm fine. What about you?");
+            sendMessage.setChatId(String.valueOf(message.getChatId()));
+            int prev = update.getMessage().getDate();
+            try {
+                execute(sendMessage);
+            } catch (TelegramApiException e) {
+                e.printStackTrace();
+            }
+            if (update.getMessage().getDate() - prev < 10  && input.equalsIgnoreCase("ok")) {
+            	sendMessage.setText("Glad to hear this!");
+                sendMessage.setChatId(String.valueOf(message.getChatId()));
+                try {
+                    execute(sendMessage);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (update.getMessage().getDate() - prev < 10  && input.equalsIgnoreCase("bad")) {
+            	sendMessage.setText("So sorry about this!");
+                sendMessage.setChatId(String.valueOf(message.getChatId()));
+                try {
+                    execute(sendMessage);
+                } catch (TelegramApiException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        
+        
         sendMessage.setChatId(String.valueOf(message.getChatId()));
         try {
             execute(sendMessage);
@@ -101,13 +174,15 @@ public class MateAcademyBot extends TelegramLongPollingBot {
         }
     }
 
-    private ReplyKeyboardMarkup getMenuKeyboard() {
-        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+   
+    
+    private List<KeyboardRow> getMenuKeyboard() {
+        //ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
         replyKeyboardMarkup.setSelective(true);
         replyKeyboardMarkup.setResizeKeyboard(true);
         replyKeyboardMarkup.setOneTimeKeyboard(false);
 
-        List<KeyboardRow> keyboardRows = new ArrayList<>();
+        //List<KeyboardRow> keyboardRows = new ArrayList<>();
 
         KeyboardRow keyboardRow = new KeyboardRow();
         keyboardRow.add("Breakfast");
@@ -121,8 +196,83 @@ public class MateAcademyBot extends TelegramLongPollingBot {
 
         replyKeyboardMarkup.setKeyboard(keyboardRows);
 
-        return replyKeyboardMarkup;
+        return keyboardRows; //replyKeyboardMarkup;
     }
+    
+    private List<KeyboardRow> getAddMenuKeyboard() {
+        //ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+        replyKeyboardMarkup.setSelective(true);
+        replyKeyboardMarkup.setResizeKeyboard(true);
+        replyKeyboardMarkup.setOneTimeKeyboard(false);
+
+        //List<KeyboardRow> keyboardRows = new ArrayList<>();
+
+        KeyboardRow keyboardRow = new KeyboardRow();
+        keyboardRow.add("Late Supper");
+        keyboardRow.add("Street Food");
+        //KeyboardRow keyboardSecondRow = new KeyboardRow();
+        //keyboardSecondRow.add("Dinner");
+        //keyboardSecondRow.add("Supper");
+
+        keyboardRows.addAll(getMenuKeyboard());
+        keyboardRows.add(keyboardRow);
+        //keyboardRows.add(keyboardSecondRow);
+
+        //replyKeyboardMarkup.setKeyboard(keyboardRows);
+
+        return keyboardRows;
+    }
+    
+//    private ReplyKeyboardMarkup getMenuKeyboard() {
+//        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+//        replyKeyboardMarkup.setSelective(true);
+//        replyKeyboardMarkup.setResizeKeyboard(true);
+//        replyKeyboardMarkup.setOneTimeKeyboard(false);
+//
+//        List<KeyboardRow> keyboardRows = new ArrayList<>();
+//
+//        KeyboardRow keyboardRow = new KeyboardRow();
+//        keyboardRow.add("Breakfast");
+//        keyboardRow.add("Lunch");
+//        KeyboardRow keyboardSecondRow = new KeyboardRow();
+//        keyboardSecondRow.add("Dinner");
+//        keyboardSecondRow.add("Supper");
+//
+//        keyboardRows.add(keyboardRow);
+//        keyboardRows.add(keyboardSecondRow);
+//
+//        replyKeyboardMarkup.setKeyboard(keyboardRows);
+//
+//        return replyKeyboardMarkup;
+//    }
+//    
+//    private ReplyKeyboardMarkup getAddMenuKeyboard() {
+//        ReplyKeyboardMarkup replyKeyboardMarkup = new ReplyKeyboardMarkup();
+//        replyKeyboardMarkup.setSelective(true);
+//        replyKeyboardMarkup.setResizeKeyboard(true);
+//        replyKeyboardMarkup.setOneTimeKeyboard(false);
+//
+//        List<KeyboardRow> keyboardRows = new ArrayList<>();
+//
+//        KeyboardRow keyboardRow = new KeyboardRow();
+//        keyboardRow.add("Late Supper");
+//        keyboardRow.add("Street Food");
+//        //KeyboardRow keyboardSecondRow = new KeyboardRow();
+//        //keyboardSecondRow.add("Dinner");
+//        //keyboardSecondRow.add("Supper");
+//
+//        keyboardRows.add(keyboardRow);
+//        //keyboardRows.add(keyboardSecondRow);
+//
+//        replyKeyboardMarkup.setKeyboard(keyboardRows);
+//
+//        return replyKeyboardMarkup;
+//    }
+//    public static void main(String[] args) {
+//    	String a = "How are you?";
+//		System.out.println((a.replaceAll("[ ?]", " ").replaceAll("[ !]", " ").replaceAll("[ .]", " ").trim()).equalsIgnoreCase("how are you"));
+//		System.out.println(a.replaceAll("[ ?]", " ").replaceAll("[ !]", " ").replaceAll("[ .]", " "));
+//	}
 }
 
 
